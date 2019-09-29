@@ -1,3 +1,8 @@
 import './assets/scss/index.scss';
 
-console.log('index html');
+let dom = document.querySelector('#app');
+if (dom) {
+  dom.innerHTML = 'index html';
+} else {
+  console.log('no #app');
+}

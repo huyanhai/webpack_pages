@@ -2,6 +2,7 @@ const golb = require('glob');
 const path = require('path');
 const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const PAGES_PATH = path.resolve(__dirname, '../app/pages/');
 
@@ -11,7 +12,6 @@ exports.entries = () => {
     const pageName = path.basename(path.dirname(filepath));
     pages[pageName] = filepath;
   });
-  console.log(pages);
   return pages;
 };
 
@@ -29,7 +29,7 @@ exports.htmls = () => {
       new HtmlWebpackPlugin({
         title: '输出的html',
         filename: `${pageName}.html`,
-        chunks: [pageName],
+        chunks: ['vendors', pageName],
         template: templatePath, //模板
         hash: true, // 会在打包好的js后面加上hash串,防止缓存
         minify: {
@@ -37,6 +37,19 @@ exports.htmls = () => {
           removeComments: false, //移除HTML中的注释
           collapseWhitespace: false //删除空白符与换行符
         }
+      })
+    );
+  });
+  return pages;
+};
+
+exports.csss = () => {
+  const pages = [];
+  golb.sync(PAGES_PATH + '/*/main.js').forEach(filepath => {
+    const pageName = path.basename(path.dirname(filepath));
+    pages.push(
+      new MiniCssExtractPlugin({
+        filename: 'assets/css/[name].[chunkhash:8].css'
       })
     );
   });

@@ -1,2 +1,6 @@
 # webpack_pages
-webpack多页面脚手架
+
+webpack 多页面脚手架
+
+- 支持多核 cpu 打包
+- 支持多页面打包

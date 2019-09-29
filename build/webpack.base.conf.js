@@ -4,12 +4,13 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HappyPack = require('happypack'); // 开启多cpu打包
 const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
 const VueLoaderPlugin = require('vue-loader/lib/plugin'); // 15.*以后的版本需要使用VueLoaderPlugin
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const utils = require('../config/index.js');
 
 module.exports = {
   entry: utils.entries(),
   output: {
-    filename: './js/[name].js',
+    filename: './assets/js/[name]_[hash:8].js',
     path: path.resolve(__dirname, '../dist')
   },
   module: {
@@ -23,19 +24,30 @@ module.exports = {
         loader: 'happypack/loader?id=happyBabel'
       },
       {
-        test: /\.scss$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader']
+        test: /\.(sa|sc|c)ss$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: '../css'
+            }
+          },
+          'css-loader',
+          'sass-loader'
+        ]
       }
     ]
   },
   optimization: {
-    // 公共文件提取
+    // 公共js文件提取
     splitChunks: {
       cacheGroups: {
         commons: {
-          name: 'vendor',
-          chunks: 'initial',
-          minChunks: 2
+          name: 'vendors', //提取出来的文件命名
+          chunks: 'initial', //initial表示提取入口文件的公共部分
+          minChunks: 2, //表示提取公共部分最少的文件数
+          minSize: 0, //表示提取公共部分最小的大小
+          enforce: true
         }
       }
     }
@@ -57,5 +69,5 @@ module.exports = {
       //允许 HappyPack 输出日志
       verbose: true
     })
-  ].concat(utils.htmls())
+  ].concat(utils.htmls(), utils.csss())
 };
