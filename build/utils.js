@@ -1,3 +1,11 @@
+/*
+ * @Description:webpack打包多页面基础配置
+ * @Author: huyanhai
+ * @since: 2019-09-27 13:47:28
+ * @lastTime: 2019-09-30 10:32:11
+ * @如果有bug，那肯定不是我的锅
+ */
+
 const golb = require('glob');
 const path = require('path');
 const fs = require('fs');

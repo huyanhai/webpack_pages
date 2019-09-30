@@ -5,7 +5,12 @@ const HappyPack = require('happypack'); // 开启多cpu打包
 const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
 const VueLoaderPlugin = require('vue-loader/lib/plugin'); // 15.*以后的版本需要使用VueLoaderPlugin
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const utils = require('../config/index.js');
+const utils = require('./utils.js');
+const webpack = require('webpack');
+
+function resolve(dir) {
+  return path.join(__dirname, '..', dir);
+}
 
 module.exports = {
   entry: utils.entries(),
@@ -24,6 +29,30 @@ module.exports = {
         loader: 'happypack/loader?id=happyBabel'
       },
       {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: '../dist/img/[name].[hash:7].[ext]'
+        }
+      },
+      {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: '../dist/media/[name].[hash:7].[ext]'
+        }
+      },
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: '../dist/fonts/[name].[hash:7].[ext]'
+        }
+      },
+      {
         test: /\.(sa|sc|c)ss$/,
         use: [
           {
@@ -37,6 +66,12 @@ module.exports = {
         ]
       }
     ]
+  },
+  resolve: {
+    extensions: ['.js', '.vue', '.json'],
+    alias: {
+      '@': resolve('src')
+    }
   },
   optimization: {
     // 公共js文件提取
@@ -55,6 +90,11 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+      }
+    }),
     new HappyPack({
       //用id来标识 happypack处理那里类文件
       id: 'happyBabel',
