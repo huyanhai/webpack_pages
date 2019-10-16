@@ -2,7 +2,7 @@
  * @Description:webpack打包多页面基础配置
  * @Author: huyanhai
  * @since: 2019-09-27 13:47:28
- * @lastTime: 2019-09-30 10:32:11
+ * @lastTime: 2019-10-16 10:46:06
  * @如果有bug，那肯定不是我的锅
  */
 
@@ -15,6 +15,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const PAGES_PATH = path.resolve(__dirname, '../app/pages/');
 
 exports.entries = () => {
+  // 入口配置
+  // 入口文件为pages目录下
   const pages = {};
   golb.sync(PAGES_PATH + '/*/main.js').forEach(filepath => {
     const pageName = path.basename(path.dirname(filepath));
